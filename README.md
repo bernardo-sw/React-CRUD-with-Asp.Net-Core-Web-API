@@ -1,6 +1,9 @@
 # React-CRUD-with-Asp.Net-Core-Web-API
+
 Full Stack React CRUD with Asp.Net Core Web API.
+
 This application creates a basic CRUD for managing students.
+
 To keep this test API simple, we will not implement more advanced and essential features such as Web API versioning, pagination, HATEOAS, and global error handling. Our goal is simply to test the consumption of a Web API with React.
 
 ## The project uses:
