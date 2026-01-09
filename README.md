@@ -13,7 +13,7 @@ To keep this test API simple, we will not implement more advanced and essential 
 - Entity Framework Core with Code First;
 - Identity;
 - Axios;
-- Swagger;
+- Swagger/OpenAPI
 - React;
 - JWT Authentication;
 - SQL Server.
