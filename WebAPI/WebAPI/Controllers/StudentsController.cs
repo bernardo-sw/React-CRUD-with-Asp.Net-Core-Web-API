@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using WebAPI.Models;
 using WebAPI.Services;
 
@@ -51,7 +50,7 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpGet("{id:int}", Name="Student")]
+        [HttpGet("{id:int}", Name = "GetStudent")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<Student>> GetStudent(int id)
@@ -67,6 +66,64 @@ namespace WebAPI.Controllers
             catch
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error retrieving student by ID.");
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Create(Student student)
+        {
+            try
+            {
+                await _studentService.CreateStudent(student);
+                return CreatedAtRoute(nameof(GetStudent), new { id = student.Id }, student);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error while trying to create a student.");
+            }
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> Update(int id, [FromBody] Student student)
+        {
+            try
+            {
+                if (student.Id == id)
+                {
+                    await _studentService.UpdateStudent(student);
+                    //return NoContent();
+                    return Ok($"Student with ID {id} was successfully updated.");
+                }
+                else
+                {
+                    return BadRequest("Inconsistent data.");
+                }
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error while trying to update the student.");
+            }
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            try
+            {
+                Student student = await _studentService.GetStudent(id);
+                if (student != null)
+                {
+                    await _studentService.DeleteStudent(student);
+                    return Ok($"Student with ID {id} was successfully deleted.");
+                }
+                else
+                {
+                    return NotFound($"Student with ID {id} was not found.");
+                }
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error while trying to delete the student.");
             }
         }
     }
