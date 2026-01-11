@@ -40,3 +40,19 @@
 .Uppercase {
   text-transform: uppercase;
 }
+
+.Net-Core-logo {
+  height: 200px;
+  width: auto;
+  margin-top: 40px;
+}
+
+.container-logos {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.container-logos img {
+  width: 50%;
+}
