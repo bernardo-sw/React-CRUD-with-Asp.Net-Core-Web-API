@@ -3,7 +3,7 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
-import logo from './assets/register.png';
+import logoRegister from './assets/register.png';
 
 function App() {
   
@@ -24,11 +24,10 @@ function App() {
   });
 
   return (
-    <div className="App">
-      <br />
+    <div className="student-container">
       <h3>Student registration</h3>
       <header>
-        <img src={logo} alt="Register" />
+        <img src={logoRegister} alt="Register" />
         <button className='btn btn-success'>Register</button>
       </header>
       <table className='table table-bordered'>
@@ -50,9 +49,8 @@ function App() {
               <td>{student.email}</td>
               <td>{student.phoneNumber}</td>
               <td>{student.age}</td>
-              <td>
+              <td className="action-buttons">
                 <button className='btn btn-primary'>Edit</button>
-                &nbsp;
                 <button className='btn btn-danger'>Delete</button>
               </td>
             </tr>
