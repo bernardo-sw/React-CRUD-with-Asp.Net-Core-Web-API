@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import {useState, useEffect} from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
@@ -8,9 +8,33 @@ import logoRegister from './assets/register.png';
 function App() {
   
   const baseUrl = "https://localhost:44396/api/Students";
-  const [data, setData] = useState([]);
 
-  async function requestGet() {
+  const [data, setData] = useState([]);
+  
+  const [modalInsertar, setModalInsertar] = useState(false);
+
+  const [selectedStudent, setSelectedStudent] = useState({
+    id: null,
+    name: '',
+    email: '',
+    phoneNumber: '',
+    age: ''
+  });
+
+  const toggleInsertar = () => {
+    setModalInsertar(!modalInsertar);
+  };
+
+  const handleChange = e => {
+    const {name, value} = e.target;
+    setSelectedStudent(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+    console.log(selectedStudent);
+  };
+
+  const requestGet = async () => {
     await axios.get(baseUrl)
       .then(response => {
         setData(response.data);
@@ -18,17 +42,29 @@ function App() {
         console.log(error);
       });
   }
-  
+
+  const requestPost = async () => {
+    delete selectedStudent.id;
+    selectedStudent.age = parseInt(selectedStudent.age);
+    await axios.post(baseUrl, selectedStudent)
+      .then(response => {
+        setData(data.concat(response.data));
+        toggleInsertar();
+      }).catch(error => {
+        console.log(error);
+      });
+  }
+
   useEffect(() => {
     requestGet();
   });
 
   return (
     <div className="student-container">
-      <h3>Student registration</h3>
+      <h3>Students registration</h3>
       <header>
         <img src={logoRegister} alt="Register" />
-        <button className='btn btn-success'>Register</button>
+        <button onClick={() => toggleInsertar()} className='btn btn-success'>Register</button>
       </header>
       <table className='table table-bordered'>
         <thead>
@@ -57,6 +93,32 @@ function App() {
           ))}
         </tbody>
       </table>
+      <Modal isOpen={modalInsertar}>
+        <ModalHeader>Register Student</ModalHeader>
+        <ModalBody>
+          <div className='form-group'>
+            <label>Name:</label>
+            <br />
+            <input type="text" className='form-control' name='name' onChange={handleChange} />
+            <br />
+            <label>E-mail:</label>
+            <br />
+            <input type="text" className='form-control' name='email' onChange={handleChange} />
+            <br />
+            <label>Phone Number:</label>
+            <br />
+            <input type="text" className='form-control' name='phoneNumber' onChange={handleChange} />
+            <br />
+            <label>Age:</label>
+            <br />
+            <input type="number" className='form-control' name='age' onChange={handleChange} />
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <button className='btn btn-primary' onClick={() => requestPost()}>Save</button>
+          <button className='btn btn-danger' onClick={() => toggleInsertar()}>Cancel</button>
+        </ModalFooter>
+      </Modal>
     </div>
   );
 }
