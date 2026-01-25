@@ -10,9 +10,8 @@ function App() {
   const baseUrl = "https://localhost:44396/api/Students";
 
   const [data, setData] = useState([]);
-  
-  const [modalInsertar, setModalInsertar] = useState(false);
-
+  const [modalInclude, setModalInclude] = useState(false);
+  const [modalEdit, setModalEdit] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState({
     id: null,
     name: '',
@@ -21,8 +20,17 @@ function App() {
     age: ''
   });
 
-  const toggleInsertar = () => {
-    setModalInsertar(!modalInsertar);
+  const selectStudent = (student, action) => {
+    setSelectedStudent(student);
+    (action === 'Edit') && toggleEdit();
+  };
+
+  const toggleInclude = () => {
+    setModalInclude(!modalInclude);
+  };
+
+  const toggleEdit = () => {
+    setModalEdit(!modalEdit);
   };
 
   const handleChange = e => {
@@ -49,7 +57,27 @@ function App() {
     await axios.post(baseUrl, selectedStudent)
       .then(response => {
         setData(data.concat(response.data));
-        toggleInsertar();
+        toggleInclude();
+      }).catch(error => {
+        console.log(error);
+      });
+  }
+
+  const requestPut = async () => {
+    selectedStudent.age = parseInt(selectedStudent.age);
+    await axios.put(baseUrl + '/' + selectedStudent.id, selectedStudent)
+      .then(response => {
+        var dataNew = data;
+        dataNew.map(student => {
+          if (student.id === selectedStudent.id) {
+            student.name = selectedStudent.name;
+            student.email = selectedStudent.email;
+            student.phoneNumber = selectedStudent.phoneNumber;
+            student.age = selectedStudent.age;
+          }
+        });
+        setData(dataNew);
+        toggleEdit();
       }).catch(error => {
         console.log(error);
       });
@@ -57,14 +85,14 @@ function App() {
 
   useEffect(() => {
     requestGet();
-  });
+  }, [data]);
 
   return (
     <div className="student-container">
       <h3>Students registration</h3>
       <header>
         <img src={logoRegister} alt="Register" />
-        <button onClick={() => toggleInsertar()} className='btn btn-success'>Register</button>
+        <button onClick={() => toggleInclude()} className='btn btn-success'>Register</button>
       </header>
       <table className='table table-bordered'>
         <thead>
@@ -86,14 +114,15 @@ function App() {
               <td>{student.phoneNumber}</td>
               <td>{student.age}</td>
               <td className="action-buttons">
-                <button className='btn btn-primary'>Edit</button>
-                <button className='btn btn-danger'>Delete</button>
+                <button className='btn btn-primary' onClick={() => selectStudent(student, 'Edit')}>Edit</button>
+                <button className='btn btn-danger' onClick={() => selectStudent(student, 'Delete')}>Delete</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      <Modal isOpen={modalInsertar}>
+
+      <Modal isOpen={modalInclude}>
         <ModalHeader>Register Student</ModalHeader>
         <ModalBody>
           <div className='form-group'>
@@ -116,7 +145,38 @@ function App() {
         </ModalBody>
         <ModalFooter>
           <button className='btn btn-primary' onClick={() => requestPost()}>Save</button>
-          <button className='btn btn-danger' onClick={() => toggleInsertar()}>Cancel</button>
+          <button className='btn btn-danger' onClick={() => toggleInclude()}>Cancel</button>
+        </ModalFooter>
+      </Modal>
+
+      <Modal isOpen={modalEdit}>
+        <ModalHeader>Edit Student</ModalHeader>
+        <ModalBody>
+          <div className='form-group'>
+            <label>ID:</label>
+            <br />
+            <input type="text" className='form-control' readOnly value={selectedStudent && selectedStudent.id} />
+            <br />
+            <label>Name:</label>
+            <br />
+            <input type="text" className='form-control' name='name' onChange={handleChange} value={selectedStudent && selectedStudent.name} />
+            <br />
+            <label>E-mail:</label>
+            <br />
+            <input type="text" className='form-control' name='email' onChange={handleChange} value={selectedStudent && selectedStudent.email} />
+            <br />
+            <label>Phone Number:</label>
+            <br />
+            <input type="text" className='form-control' name='phoneNumber' onChange={handleChange} value={selectedStudent && selectedStudent.phoneNumber} />
+            <br />
+            <label>Age:</label>
+            <br />
+            <input type="number" className='form-control' name='age' onChange={handleChange} value={selectedStudent && selectedStudent.age} />
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <button className='btn btn-primary' onClick={() => requestPut()}>Save</button>
+          <button className='btn btn-danger' onClick={() => toggleEdit()}>Cancel</button>
         </ModalFooter>
       </Modal>
     </div>
