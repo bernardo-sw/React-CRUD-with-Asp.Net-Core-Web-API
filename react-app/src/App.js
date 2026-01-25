@@ -10,8 +10,10 @@ function App() {
   const baseUrl = "https://localhost:44396/api/Students";
 
   const [data, setData] = useState([]);
+  const [updateData, setUpdateData] = useState(true);
   const [modalInclude, setModalInclude] = useState(false);
   const [modalEdit, setModalEdit] = useState(false);
+  const [modalDelete, setModalDelete] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState({
     id: null,
     name: '',
@@ -22,7 +24,7 @@ function App() {
 
   const selectStudent = (student, action) => {
     setSelectedStudent(student);
-    (action === 'Edit') && toggleEdit();
+    (action === 'Edit') ? toggleEdit() : toggleDelete();
   };
 
   const toggleInclude = () => {
@@ -31,6 +33,10 @@ function App() {
 
   const toggleEdit = () => {
     setModalEdit(!modalEdit);
+  };
+
+  const toggleDelete = () => {
+    setModalDelete(!modalDelete);
   };
 
   const handleChange = e => {
@@ -57,6 +63,7 @@ function App() {
     await axios.post(baseUrl, selectedStudent)
       .then(response => {
         setData(data.concat(response.data));
+        setUpdateData(true);
         toggleInclude();
       }).catch(error => {
         console.log(error);
@@ -77,15 +84,31 @@ function App() {
           }
         });
         setData(dataNew);
+        setUpdateData(true);
         toggleEdit();
       }).catch(error => {
         console.log(error);
       });
   }
 
+  const requestDelete = async () => {
+    await axios.delete(baseUrl + '/' + selectedStudent.id)
+      .then(response => {
+        setData(data.filter(student => student.id !== response.data));
+        setUpdateData(true);
+        toggleDelete();
+      }).catch(error => {
+        console.log(error);
+      });
+  }
+
   useEffect(() => {
-    requestGet();
-  }, [data]);
+    if (updateData)
+    {
+      requestGet();
+      setUpdateData(false);
+    }
+  }, [updateData]);
 
   return (
     <div className="student-container">
@@ -177,6 +200,17 @@ function App() {
         <ModalFooter>
           <button className='btn btn-primary' onClick={() => requestPut()}>Save</button>
           <button className='btn btn-danger' onClick={() => toggleEdit()}>Cancel</button>
+        </ModalFooter>
+      </Modal>
+
+      <Modal isOpen={modalDelete}>
+        <ModalHeader>Delete Student</ModalHeader>
+        <ModalBody>
+          Are you sure you want to delete the student {selectedStudent && selectedStudent.name}?
+        </ModalBody>
+        <ModalFooter>
+          <button className='btn btn-primary' onClick={() => requestDelete()}>Yes</button>
+          <button className='btn btn-danger' onClick={() => toggleDelete()}>No</button>
         </ModalFooter>
       </Modal>
     </div>
