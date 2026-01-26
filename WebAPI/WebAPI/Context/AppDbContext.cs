@@ -15,6 +15,10 @@ namespace WebAPI.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // IMPORTANT: Call the base class's OnModelCreating method first
+            // when you override the OnModelCreating
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Student>().HasData(
                 new Student
                 {
