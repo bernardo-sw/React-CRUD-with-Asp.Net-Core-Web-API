@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System.Runtime.InteropServices;
+using WebAPI.Services.Interfaces;
 
 namespace WebAPI.Services
 {
@@ -8,7 +8,7 @@ namespace WebAPI.Services
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public AuthenticateService(SignInManager<IdentityUser> signInManager, 
+        public AuthenticateService(SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager)
         {
             _signInManager = signInManager;
@@ -17,17 +17,18 @@ namespace WebAPI.Services
 
         public async Task<bool> Authenticate(string email, string password)
         {
-            var result = await _signInManager.PasswordSignInAsync(email, password, 
-                false, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(email, password,
+            false, lockoutOnFailure: false);
 
             return result.Succeeded;
+
         }
 
-        public async Task<bool> RegisterUser(string name, string email, string password)
+        public async Task<bool> RegisterUser(string email, string password)
         {
             var appUser = new IdentityUser
             {
-                UserName = name,
+                UserName = email,
                 Email = email,
             };
 
@@ -35,7 +36,7 @@ namespace WebAPI.Services
 
             if (result.Succeeded)
                 await _signInManager.SignInAsync(appUser, isPersistent: false);
-            
+
             return result.Succeeded;
         }
 

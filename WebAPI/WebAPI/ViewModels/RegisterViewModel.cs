@@ -3,16 +3,16 @@
 namespace WebAPI.ViewModels
 {
     public class RegisterViewModel
-    {
-        [Required(ErrorMessage = "Please provide the name")]
-        public string Name { get; set; }
-        
+    {   
         [Required]
         [EmailAddress]
         public string Email { get; set; }
         
         [Required]
         [DataType(DataType.Password)]
+        [StringLength(20,
+            ErrorMessage = "The {0} must be at least {2} and at most {1} characters long",
+            MinimumLength = 8)]
         public string Password { get; set; }
 
         [DataType(DataType.Password)]
