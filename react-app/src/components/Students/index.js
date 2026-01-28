@@ -12,7 +12,7 @@ export default function Students() {
         <header>
             <img src={logoRegister} alt="Register" />
             <span>Welcome, <strong>Bernardo</strong>!</span>
-            <Link className="button-link" to="/student/new">Add New Student</Link>
+            <Link className="button-link" to="/student/manage/0">Add New Student</Link>
             <button type="button" className="button">
                 <FiXCircle size={35} color="#17202a" />
             </button>
@@ -30,8 +30,8 @@ export default function Students() {
                     <b>Phone Number:</b> +55 21 96509-5081<br /><br />
                     <b>Age:</b> 45<br /><br />
                     <div class="button-container">
-                        <button type="button"><FiEdit size="25" color="#17202a" /></button>
-                        <button type="button"><FiUserX size="25" color="#17202a" /></button>
+                        <button type="button"><FiEdit size={25} color="#17202a" /></button>
+                        <button type="button"><FiUserX size={25} color="#17202a" /></button>
                     </div>
                 </p>
             </li>
@@ -42,8 +42,8 @@ export default function Students() {
                     <b>Phone Number:</b> +55 21 96509-5081<br /><br />
                     <b>Age:</b> 45<br /><br />
                     <div class="button-container">
-                        <button type="button"><FiEdit size="25" color="#17202a" /></button>
-                        <button type="button"><FiUserX size="25" color="#17202a" /></button>
+                        <button type="button"><FiEdit size={25} color="#17202a" /></button>
+                        <button type="button"><FiUserX size={25} color="#17202a" /></button>
                     </div>
                 </p>
             </li>
