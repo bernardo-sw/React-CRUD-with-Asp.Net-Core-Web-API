@@ -40,7 +40,12 @@
 
 .student-container h1 {
     margin-top: 20px;
-    margin-bottom: 24px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+
+.student-container hr {
+    margin-bottom: 35px;
 }
 
 .student-container ul {
@@ -90,6 +95,10 @@
 
 .student-container ul li b {
     font-weight: bold;
+}
+
+.student-container ul li hr {
+    margin: 20px 0;
 }
 
 .button-container {

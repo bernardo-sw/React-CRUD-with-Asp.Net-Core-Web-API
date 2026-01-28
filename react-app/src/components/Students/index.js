@@ -7,8 +7,10 @@ import { FiEdit, FiUserX, FiXCircle } from 'react-icons/fi';
 import logoRegister from '../../assets/register.png';
 
 export default function Students() {
+    // Filter data
+    const [searchInput, setSearchInput] = useState('');
+    const [filter, setFilter] = useState([]);
 
-    //const [name, setName] = useState('');
     const [students, setStudents] = useState([]);
     const navigation = useNavigate();
     
@@ -19,6 +21,19 @@ export default function Students() {
             Authorization: `Bearer ${token}`,
         }
     }), [token]);
+
+    const searchStudents = (searchValue) => {
+        setSearchInput(searchValue);
+        if (searchInput !== '') {
+            const filteredData = students.filter((student) => {
+                return Object.values(student).join(' ').toLowerCase().includes(searchInput.toLowerCase());
+            });
+            setFilter(filteredData);
+        }
+        else {
+            setFilter(students);
+        }
+    }
 
     useEffect(() => {
         async function fetchStudents() {
@@ -53,6 +68,18 @@ export default function Students() {
         }
     }
 
+    async function deleteStudent(studentId) {
+        try {
+            if (window.confirm('Are you sure you want to delete the student with ID '+studentId+'?')) 
+            {
+                await api.delete(`api/students/${studentId}`, authorization);
+                setStudents(students.filter(student => student.id !== studentId));
+            }
+        } catch (err) {
+            alert('Error deleting student: ' + err.message);
+        }
+    }
+
     return (
         <div className="student-container">
             <header>
@@ -64,29 +91,54 @@ export default function Students() {
                 </button>
             </header>
             <form>
-                <input type="text" placeholder="Search student by name" />
-                <button type="button" className="button">Filter student by name (or part of the name)</button>
+                <input type="text" 
+                    placeholder="Search student by name (or part of the name)" 
+                    onChange={(e) => searchStudents(e.target.value)}
+                />
             </form>
             <h1>List of students</h1>
-            <ul>
-                {students.map(student => (
-                    <li key={student.id}>
-                        <b>Name:</b> {student.name}<br /><br />
-                        <b>Email:</b> {student.email}<br /><br />
-                        <b>Phone Number:</b> {student.phoneNumber}<br /><br />
-                        <b>Age:</b> {student.age}<br /><br />
-                        <hr />
-                        <div class="button-container">
-                            <button onClick={() => editStudent(student.id)} type="button">
-                                <FiEdit size={25} color="#17202a" />
-                            </button>
-                            <button type="button">
-                                <FiUserX size={25} color="#17202a" />
-                            </button>
-                        </div>
-                    </li>
-                ))}
-            </ul>
+            <hr />
+            {searchInput.length > 1 ? (
+                <ul>
+                    {filter.map(student => (
+                        <li key={student.id}>
+                            <b>Name:</b> {student.name}<br /><br />
+                            <b>Email:</b> {student.email}<br /><br />
+                            <b>Phone Number:</b> {student.phoneNumber}<br /><br />
+                            <b>Age:</b> {student.age}<br /><br />
+                            <hr />
+                            <div className="button-container">
+                                <button onClick={() => editStudent(student.id)} type="button">
+                                    <FiEdit size={25} color="#17202a" />
+                                </button>
+                                <button type="button" onClick={() => deleteStudent(student.id)}>
+                                    <FiUserX size={25} color="#17202a" />
+                                </button>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <ul>
+                    {students.map(student => (
+                        <li key={student.id}>
+                            <b>Name:</b> {student.name}<br /><br />
+                            <b>Email:</b> {student.email}<br /><br />
+                            <b>Phone Number:</b> {student.phoneNumber}<br /><br />
+                            <b>Age:</b> {student.age}<br /><br />
+                            <hr />
+                            <div className="button-container">
+                                <button onClick={() => editStudent(student.id)} type="button">
+                                    <FiEdit size={25} color="#17202a" />
+                                </button>
+                                <button type="button" onClick={() => deleteStudent(student.id)}>
+                                    <FiUserX size={25} color="#17202a" />
+                                </button>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            )}
         </div>
     );
 }
