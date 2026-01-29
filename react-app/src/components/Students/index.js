@@ -12,6 +12,7 @@ export default function Students() {
     const [filter, setFilter] = useState([]);
 
     const [students, setStudents] = useState([]);
+    const [data, setData] = useState([]);
     const navigation = useNavigate();
     
     const email = localStorage.getItem('email');
@@ -80,6 +81,14 @@ export default function Students() {
         }
     }
 
+    useEffect(() => {
+        if (searchInput.length > 1)
+            setData(filter);
+        else
+            setData(students);
+
+    }, [filter, students, searchInput]);
+
     return (
         <div className="student-container">
             <header>
@@ -98,47 +107,25 @@ export default function Students() {
             </form>
             <h1>List of students</h1>
             <hr />
-            {searchInput.length > 1 ? (
-                <ul>
-                    {filter.map(student => (
-                        <li key={student.id}>
-                            <b>Name:</b> {student.name}<br /><br />
-                            <b>Email:</b> {student.email}<br /><br />
-                            <b>Phone Number:</b> {student.phoneNumber}<br /><br />
-                            <b>Age:</b> {student.age}<br /><br />
-                            <hr />
-                            <div className="button-container">
-                                <button onClick={() => editStudent(student.id)} type="button">
-                                    <FiEdit size={25} color="#17202a" />
-                                </button>
-                                <button type="button" onClick={() => deleteStudent(student.id)}>
-                                    <FiUserX size={25} color="#17202a" />
-                                </button>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                <ul>
-                    {students.map(student => (
-                        <li key={student.id}>
-                            <b>Name:</b> {student.name}<br /><br />
-                            <b>Email:</b> {student.email}<br /><br />
-                            <b>Phone Number:</b> {student.phoneNumber}<br /><br />
-                            <b>Age:</b> {student.age}<br /><br />
-                            <hr />
-                            <div className="button-container">
-                                <button onClick={() => editStudent(student.id)} type="button">
-                                    <FiEdit size={25} color="#17202a" />
-                                </button>
-                                <button type="button" onClick={() => deleteStudent(student.id)}>
-                                    <FiUserX size={25} color="#17202a" />
-                                </button>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-            )}
+            <ul>
+                {data.map(student => (
+                    <li key={student.id}>
+                        <b>Name:</b> {student.name}<br /><br />
+                        <b>Email:</b> {student.email}<br /><br />
+                        <b>Phone Number:</b> {student.phoneNumber}<br /><br />
+                        <b>Age:</b> {student.age}<br /><br />
+                        <hr />
+                        <div className="button-container">
+                            <button onClick={() => editStudent(student.id)} type="button">
+                                <FiEdit size={25} color="#17202a" />
+                            </button>
+                            <button type="button" onClick={() => deleteStudent(student.id)}>
+                                <FiUserX size={25} color="#17202a" />
+                            </button>
+                        </div>
+                    </li>
+                ))}
+            </ul>
         </div>
     );
 }
